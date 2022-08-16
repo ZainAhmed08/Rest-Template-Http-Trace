@@ -6,20 +6,17 @@ import com.example.restController.entity.Book;
 import com.example.restController.repository.BookAuthorRepo;
 import com.example.restController.service.AuthorService;
 import com.example.restController.service.BookService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.audit.listener.AuditListener;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 
 @RestController
@@ -30,8 +27,6 @@ public class Controller {
     BookService bookService;
     @Autowired
     AuthorService authorService;
-//    @Autowired
-//    CustomTraceRepository customTraceRepository;
     @Autowired
     RestTemplate restTemplate;
 
@@ -44,7 +39,6 @@ public class Controller {
         return "good morning";
     }
 
-    //Using restTemplate to call external Api's
     @GetMapping("/ping")
     public Health getActuatorHealth(){
         String url = "http://localhost:8089/actuator/health";
@@ -57,42 +51,6 @@ public class Controller {
         }
     }
 
-//    @GetMapping("/auditing")
-//    public List<EndPointHitRate> getAudit(){
-//       // RestTemplate restTemplate = new RestTemplate();
-//       // List<HttpTrace>  traceRecord = restTemplate.getForObject("http://localhost:8089/actuator/httptrace",HttpTrace.class);
-//
-//       List<String> list =  customTraceRepository.findAll().stream().map(ep-> ep.getRequest().getUri().toString()).distinct().collect(Collectors.toList());
-//
-//        resultentList.removeAll(resultentList);
-//
-//        for (String list1 : list) {
-//            EndPointHitRate endPointHitRate = new EndPointHitRate();
-//            endPointHitRate.setEndPoint(list1);
-//            long successRate = customTraceRepository.findAll().stream().filter(ep-> ep.getRequest().getUri().toString().equals(list1)).filter(e->e.getResponse().getStatus()==200).count();
-//            long failureRate = customTraceRepository.findAll().stream().filter(ep-> ep.getRequest().getUri().toString().equals(list1)).filter(e->e.getResponse().getStatus()!=200).count();
-//            endPointHitRate.setSuccess((int) successRate);
-//            endPointHitRate.setFailure((int) failureRate);
-//            resultentList.add(endPointHitRate);
-//            endPointHitRate = null;
-//        }
-//      return resultentList;
-//    }
-
-
-//    @GetMapping("/audit")
-//    public List<EndPointHitRate> getEndpointMetrics(){
-//        ObjectMapper  objectMapper = new ObjectMapper();
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        List<EndPointHitRate>  httpTrace =  restTemplate.getForObject("http://localhost:8089/api/auditing",List.class);
-////     HttpTrace trace = objectMapper.readValue(httpTrace,HttpTrace.class);
-// //       HttpTrace trace = restTemplate.getForObject("http://localhost:8089/actuator/httptrace",HttpTrace.class);
-//        ResponseEntity<HttpTrace> traceEndpoint = restTemplate.getForEntity("http://localhost:8089/actuator/httptrace",HttpTrace.class  );
-//        System.out.println(traceEndpoint.getStatusCodeValue());
-//        System.out.println(traceEndpoint.getHeaders().get("uri"));
-//       return httpTrace;
-//    }
     @GetMapping("/audit")
     public List getAuditResult(){
        auditResult = new AuditResult();
@@ -151,42 +109,6 @@ public class Controller {
     public Author deleteAuthor(@PathVariable int id){
         return authorService.deleteBookByid(id);
     }
-//    @PostMapping("/books")
-//    public Book addBook(@RequestBody DummyBookBean dummyBookBean){
-//        Author author = null;
-//        boolean bookExists = false;
-//        boolean authorExists = false;
-//        if (dummyBookBean.getBookAuthor() > authorService.getAuthors().size()) {
-//            throw new AuthorNotFoundException(" author not found in the repository please add the author before adding the book ");
-//        }else{
-//        for (Book book : bookService.getBooks()) {
-//            if (book.getBookName().equals(dummyBookBean.getBookName())) {
-//                bookExists = true;
-//                System.out.println(book.getBookName() +" = "+ dummyBookBean.getBookName());
-//                if (book.getBookAuthor().equals(authorService.getAuthorById(dummyBookBean.getBookAuthor()-1))) {
-//                    authorExists = true;
-//                }
-//            }
-//        }
-//
-//        if (bookExists == false) {
-//            for (Author author1 : authorService.getAuthors()) {
-//                if (authorService.getAuthorById(dummyBookBean.getBookAuthor()-1).getAuthorName().equals(author1.getAuthorName())) {
-//                    authorExists = true;
-//                    author = author1;
-//                    break;
-//                }
-//            }
-//        }
-//        if (bookExists && authorExists) {
-//            throw new BookAlreadyExistException(" Book with the author already exists");
-//       }
-//        else {
-//            Book book = new Book(String.valueOf(bookService.getBooks().size()+1),dummyBookBean.getBookName(),dummyBookBean.getBookPrice(),dummyBookBean.getJournal(),author);
-//            bookService.addBook(book);
-//            return book;
-//        }}
-//    }
 
     @PostMapping("/books")
     public Book addBooks(@RequestBody DummyBookBean dummyBookBean){
