@@ -22,35 +22,48 @@ public class BookServiceImplementation implements  BookService{
         return BookAuthorRepo.bookList.get(i);
     }
 
+//    @Override
+//    public Book addBook(Book book) {
+//        BookAuthorRepo.sortBookRepo();
+//        int repoSize = BookAuthorRepo.bookList.size();
+//        int lastId = Integer.parseInt(BookAuthorRepo.bookList.get(repoSize-1).getBookId());
+//
+//       System.out.println(repoSize);
+//      System.out.println(lastId);
+//        int emptySpace = 1;
+//        int temp = 0;
+//        if (repoSize < lastId ) { // which means the records inbetween are deleted
+//            for (int i = 0 ; i < BookAuthorRepo.bookList.size() ; i++) {
+//               int space = Integer.parseInt(BookAuthorRepo.bookList.get(i+1).getBookId())-Integer.parseInt(BookAuthorRepo.bookList.get(i).getBookId());
+//                if (space > emptySpace) {
+//                    emptySpace = space;
+//                    temp = i;
+//                    break;
+//                }
+//            }
+//            System.out.println("book should be added at : "+(temp+2));
+//            book.setBookId(Integer.toString(temp+2));
+//
+//
+//            BookAuthorRepo.bookList.add(book);
+//
+//        return book;
+//        } else {
+//            book.setBookId(Integer.toString(lastId+1));
+//            System.out.println(book.getBookId());
+//        BookAuthorRepo.bookList.add(book);
+//
+//        return book;
+//        }
+//    }
+
     @Override
     public Book addBook(Book book) {
-        BookAuthorRepo.sortBookRepo();
-        int repoSize = BookAuthorRepo.bookList.size();
-        int lastId = Integer.parseInt(BookAuthorRepo.bookList.get(repoSize-1).getBookId());
-
-       System.out.println(repoSize);
-      System.out.println(lastId);
-        int emptySpace = 1;
-        int temp = 0;
-        if (repoSize < lastId ) { // which means the records inbetween are deleted
-            for (int i = 0 ; i < BookAuthorRepo.bookList.size() ; i++) {
-               int space = Integer.parseInt(BookAuthorRepo.bookList.get(i+1).getBookId())-Integer.parseInt(BookAuthorRepo.bookList.get(i).getBookId());
-                if (space > emptySpace) {
-                    emptySpace = space;
-                    temp = i;
-                    break;
-                }
-            }
-            System.out.println("book should be added at : "+(temp+2));
-            book.setBookId(Integer.toString(temp+2));
-            BookAuthorRepo.bookList.add(book);
-        return book;
-        } else {
-            book.setBookId(Integer.toString(lastId+1));
-            System.out.println(book.getBookId());
+       // BookAuthorRepo.sortBookRepo();
         BookAuthorRepo.bookList.add(book);
+        BookAuthorRepo.bookListRead.add(book);
+
         return book;
-        }
     }
 
     @Override

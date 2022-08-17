@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -110,25 +111,95 @@ public class Controller {
         return authorService.deleteBookByid(id);
     }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//    @PostMapping("/books")
+//    public Book addBooks(@RequestBody DummyBookBean dummyBookBean){
+//        Boolean bookAndAuthorExists = false;
+//        Boolean authorExists = false;
+//     //   System.out.println(dummyBookBean.getBookAuthor()+" ,  "+BookAuthorRepo.bookList.get(BookAuthorRepo.bookList.size()-1).getBookId());
+//        if (dummyBookBean.getBookAuthor() > Integer.parseInt(BookAuthorRepo.bookListRead.get(BookAuthorRepo.bookListRead.size()-1).getBookId()+1)) {
+//            throw new AuthorNotFoundException(" author not found in the repository please add the author before adding the book ");
+//        } else {
+//            System.out.println();
+//            bookAndAuthorExists = BookAuthorRepo.bookListRead.stream().anyMatch(book -> book.getBookAuthor().getAuthorName().equals(BookAuthorRepo.authorList.get(dummyBookBean.bookAuthor-1).getAuthorName()) && book.getBookName().equals(dummyBookBean.bookName));
+//        }
+//        if (bookAndAuthorExists) {
+//            throw new BookAlreadyExistException(" Book with the author already exists");
+//        } else {
+//            Book book = new  Book(Integer.toString(BookAuthorRepo.bookList.size()+1),dummyBookBean.getBookName(),dummyBookBean.getBookPrice(),dummyBookBean.getJournal(),BookAuthorRepo.authorList.get(dummyBookBean.getBookAuthor()-1));
+//            bookService.addBook(book);
+//            return book;
+//        }
+//    }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//    @PostMapping("/books")
+//   public Book addBooks(@RequestBody DummyBookBean dummyBookBean){
+//        Boolean bookAndAuthorExists = false;
+//        int authorRepoLen = BookAuthorRepo.bookListRead.size();
+//        if (dummyBookBean.getBookAuthor() > authorRepoLen) {
+//            throw new AuthorNotFoundException(" author not found in the repository please add the author before adding the book ");
+//        } else {
+//            String bookName = dummyBookBean.getBookName();
+//            Iterator<Book> iterator = BookAuthorRepo.bookListRead.iterator();
+//            while (iterator.hasNext()) {
+//                if (iterator.next().getBookName().equals(bookName)) {
+//                    throw new BookAlreadyExistException(" Book with the author already exists");
+//                }
+//            }
+//        }
+//        String bookId = Integer.toString(BookAuthorRepo.bookListRead.size()+1);
+//        Book book = new Book(bookId,dummyBookBean.getBookName(),dummyBookBean.getBookPrice(),dummyBookBean.getJournal(),BookAuthorRepo.authorList.get(dummyBookBean.bookAuthor) );
+//
+//      return  bookService.addBook(book);
+//    }
+
     @PostMapping("/books")
     public Book addBooks(@RequestBody DummyBookBean dummyBookBean){
-        Boolean bookAndAuthorExists = false;
-        Boolean authorExists = false;
-        System.out.println(dummyBookBean.getBookAuthor()+" ,  "+BookAuthorRepo.bookList.get(BookAuthorRepo.bookList.size()-1).getBookId());
-        if (dummyBookBean.getBookAuthor() > Integer.parseInt(BookAuthorRepo.bookList.get(BookAuthorRepo.bookList.size()-1).getBookId()+1)) {
+        Author author = new Author();
+        System.out.println("author object "+author);
+
+        Author[] au = new Author[BookAuthorRepo.authorList.size()];
+        BookAuthorRepo.authorList.toArray(au);
+        System.out.println("author array "+au.toString());
+
+        Book[] bk = new Book[BookAuthorRepo.bookList.size()];
+        BookAuthorRepo.bookList.toArray(bk);
+        System.out.println("book array "+bk.toString());
+
+        System.out.println(dummyBookBean.getBookAuthor() +" > "+ au.length);
+
+        if (dummyBookBean.getBookAuthor() > au.length) {
             throw new AuthorNotFoundException(" author not found in the repository please add the author before adding the book ");
         } else {
-            System.out.println();
-            bookAndAuthorExists = BookAuthorRepo.bookList.stream().anyMatch(book -> book.getBookAuthor().getAuthorName().equals(BookAuthorRepo.authorList.get(dummyBookBean.bookAuthor-1).getAuthorName()) && book.getBookName().equals(dummyBookBean.bookName));
+            String bookName = dummyBookBean.getBookName();
+            System.out.println(bookName);
+
+            author = au[dummyBookBean.bookAuthor];
+            System.out.println(author.getAuthorName());
+
+            String authorName = au[dummyBookBean.bookAuthor].getAuthorName();
+            for (int i = 0; i < bk.length; i++) {
+                System.out.println(bookName +" = "+bk[i].getBookName() +" , "+ authorName+" = "+bk[i].getBookAuthor().getAuthorName());
+                if (bookName.equals(bk[i].getBookName()) && authorName.equals(bk[i].getBookAuthor().getAuthorName())) {
+                    throw new BookAlreadyExistException("Book with the same author exists");
+                }
+            }
         }
-        if (bookAndAuthorExists) {
-            throw new BookAlreadyExistException(" Book with the author already exists");
-        } else {
-            Book book = new  Book(Integer.toString(BookAuthorRepo.bookList.size()+1),dummyBookBean.getBookName(),dummyBookBean.getBookPrice(),dummyBookBean.getJournal(),BookAuthorRepo.authorList.get(dummyBookBean.getBookAuthor()-1));
-            bookService.addBook(book);
-            return book;
-        }
+            String auId = Integer.toString(BookAuthorRepo.authorList.size()+1);
+            Book book = new Book(auId ,dummyBookBean.getBookName(),dummyBookBean.getBookPrice(),dummyBookBean.getJournal(),BookAuthorRepo.authorList.get(dummyBookBean.bookAuthor)   );
+           return bookService.addBook(book);
+//            Iterator<Book> iterator = BookAuthorRepo.bookListRead.iterator();
+//            while (iterator.hasNext()) {
+//                if (iterator.next().getBookName().equals(bookName)) {
+//                    throw new BookAlreadyExistException(" Book with the author already exists");
+//                }
+//            }
+
+
+
     }
+
 
     @ExceptionHandler
     public ResponseEntity<AuthorErrorResponse> handleException(AuthorNotFoundException exc){
